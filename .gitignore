@@ -1,0 +1,5 @@
+.vscode/
+main
+# ignore saves and generated maps:
+*.txt
+showed_map.json
