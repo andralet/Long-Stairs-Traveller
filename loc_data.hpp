@@ -61,16 +61,16 @@
 
     const unsigned LOC_NUM = 5;
     const struct Location LOC[LOC_NUM] = {
-        {"Пустыня", 10, 50, 10, 0, 4, 0, 2, 0, 8, 0, 6, -1, 1, "Лава или вода", "Дракониды", {5, 5, SAND, SQUARE_WALLS, 0, 0, 0, 0,
-            DEFAULT_COLORS}},
-        {"Лес", 30, 50, 7, 6, 10, 2, 7, 0, 5, 0, 10, -1, 1, "Вода", "Звери", {5, 5, GRASS, CAVERN_WALLS, 0, 0, 0, 0,
-            DEFAULT_COLORS}},
-        {"Болото", 10, 50, 3, 1, 4, 6, 9, 0, 3, 0, 9, -1, 2, "Вода", "Монстры или нежить", {5, 5, SWAMP, SQUARE_WALLS, 0, 0, 0, 0,
-            DEFAULT_COLORS}},
+        {"Пустыня", 10, 50, 10, 0, 4, 0, 2, 0, 8, 0, 6, -1, 1, "Лава или вода", "Дракониды или демоны", {5, 5, SAND, SQUARE_WALLS, 0, 0, 0, 0,
+            {DEFAULT_COLORS.walls, DEFAULT_COLORS.dirt, 0x58260b, 0x4c220c, DEFAULT_COLORS.font}}}, // water - 0x5d6649
+        {"Лес", 30, 50, 7, 6, 10, 2, 7, 0, 5, 0, 10, -1, 1, "Вода", "Звери, монстры или лесные жители", {5, 5, GRASS, CAVERN_WALLS, 0, 0, 0, 0,
+            {DEFAULT_COLORS.walls, DEFAULT_COLORS.dirt, DEFAULT_COLORS.plant1, DEFAULT_COLORS.plant2, DEFAULT_COLORS.font}}},
+        {"Болото", 10, 50, 3, 1, 4, 6, 9, 0, 3, 0, 9, -1, 2, "Вода", "Монстры, нежить или болотные жители", {5, 5, SWAMP, SQUARE_WALLS, 0, 0, 0, 0,
+            {3356713, DEFAULT_COLORS.dirt, 6588277, 5203219, DEFAULT_COLORS.font}}}, // special water 2 - 7177309
         {"Каменная комната", 10, 40, 5, 0, 1, 10, 0, 0, 0, 0, 7, -1, 1, "Нет", "Кто угодно", {5, 5, SOLID_STONE, SQUARE_WALLS, 0, 0, 0, 0,
-            DEFAULT_COLORS}},
+            {DEFAULT_COLORS.walls, DEFAULT_COLORS.dirt, 13530947, 8421504, DEFAULT_COLORS.font}}},
         {"Стальная комната", 10, 40, 5, 0, 0, 6, 0, 0, 0, 2, 10, 0, 1, "Нет", "Кто угодно", {5, 5, IRON_FLOOR, SQUARE_WALLS, 0, 0, 0, 0,
-            DEFAULT_COLORS}}
+            {DEFAULT_COLORS.walls, DEFAULT_COLORS.dirt, DEFAULT_COLORS.plant1, DEFAULT_COLORS.plant2, DEFAULT_COLORS.font}}}
     };
 
     const unsigned LANDING_DIST = 3,

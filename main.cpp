@@ -9,6 +9,15 @@ const char *LANDING_NAME[LANDING_NUM] = {
 
 const int GEN_LOC_NUM = 3;
 
+void show_info(const ConcreteLocation &l, int level, int map_quality) {
+    printf("Уровень - %d\t", level);
+    printf("Качество карты - %d\n", map_quality);
+    if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
+        printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[level / LANDING_DIST]);
+    }
+    print_loc(l, map_quality);
+}
+
 int main(void) {
     srand(time(NULL));
 
@@ -18,7 +27,7 @@ int main(void) {
     int picture_id = 0;
 
     gen_doors(l, GEN_LOC_NUM, 0);
-    if (level % LANDING_DIST == 0) {
+    if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
         printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[level / LANDING_DIST]);
     }
     print_loc(l, map_quality);
@@ -28,12 +37,7 @@ int main(void) {
     scanf("%s", cmd);
     while (cmd[0] != 'q') {
         if (!strcmp(cmd, "info")) {
-            printf("Уровень - %d\t", level);
-            printf("Качество карты - %d\n", map_quality);
-            if (level % LANDING_DIST == 0) {
-                printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[level / LANDING_DIST]);
-            }
-            print_loc(l, map_quality);
+            show_info(l, level, map_quality);
         } else if (!strcmp(cmd, "go")) {
             int door = 0;
             printf("Дверь (0-%d): ", l.door_num - 1);
@@ -44,7 +48,7 @@ int main(void) {
                 if (new_loc_id == -1)
                     return 1;
                 ConcreteLocation new_l = make_loc(new_loc_id);
-                if (new_level % LANDING_DIST == 0) {
+                if (new_level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
                     new_l = LANDING[new_level / LANDING_DIST];
                     printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[new_level / LANDING_DIST]);
                     gen_doors(new_l, GEN_LOC_NUM, new_level / LANDING_DIST);
@@ -66,6 +70,14 @@ int main(void) {
             }
         } else if (!strcmp(cmd, "trouble")) {
             gen_troubles(l);
+            show_info(l, level, map_quality);
+        } else if (!strcmp(cmd, "door")) {
+            if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
+                gen_doors(l, GEN_LOC_NUM, level / LANDING_DIST);
+            } else {
+                gen_doors(l, GEN_LOC_NUM, -1);
+            }
+            show_info(l, level, map_quality);
         } else if (!strcmp(cmd, "show")) {
             FILE *out = fopen("showed_map.json", "w");
             MapSettings data = {};
@@ -98,14 +110,9 @@ int main(void) {
             save(l, level, map_quality, picture_id);
         } else if (!strcmp(cmd, "load")) {
             load(l, level, map_quality, picture_id);
-            printf("Уровень - %d\t", level);
-            printf("Качество карты - %d\n", map_quality);
-            if (level % LANDING_DIST == 0) {
-                printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[level / LANDING_DIST]);
-            }
-            print_loc(l, map_quality);
+            show_info(l, level, map_quality);
         } else {
-            printf("Хелп: info - о локации, go - идти, trouble - перегенерировать особенности, show - сгенерить json,\nmap - управление качеством карты, level - управление глубиной,\nsave/load - сохранить/загрузить игру, quit - сдаться\n");
+            printf("Хелп: info - о локации, go - идти, trouble - перегенерировать особенности, door - перегенерировать двери, show - сгенерить json,\nmap - управление качеством карты, level - управление глубиной,\nsave/load - сохранить/загрузить игру, quit - сдаться\n");
         }
         printf(">");
         scanf("%s", cmd);
