@@ -3,6 +3,7 @@
 const char *LANDING_NAME[LANDING_NUM] = {
     "Hellmouth",
     "Фабрика",
+    "Кристальный грот",
     "Лабиринт",
     "Предел"
 };
@@ -74,7 +75,22 @@ int main(void) {
             }
         } else if (!strcmp(cmd, "loc")) {
             if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
-                printf("Ты в якорной точке, чудик!\n");
+                ConcreteLocation new_l = LANDING[level / LANDING_DIST];
+                gen_doors(new_l, GEN_LOC_NUM, level / LANDING_DIST);
+                gen_troubles(new_l);
+                if (new_l.troubles.empty()) {
+                    // greater chances for at least one trouble
+                    gen_troubles(new_l);
+                }
+                printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[level / LANDING_DIST]);
+                print_loc(new_l, map_quality);
+                int ans = -1;
+                printf("Отменить?(-1 - да): ");
+                scanf("%d", &ans);
+                if (ans >= 0) {
+                    printf("Удачи!\n");
+                    l = new_l;
+                }
             } else {
                 int loc_id = 0;
                 printf("ID (0-%d): ", LOC_NUM - 1);

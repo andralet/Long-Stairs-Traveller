@@ -8,7 +8,7 @@ int door_offset_by_pos(int pos, const MapSettings &data) {
 	else if (pos < 2 * (data.width - 2) + data.height - 2) // bottom
 		return (data.width * data.height - (pos - data.width + 2 - data.height + 2) - 2);
 	else if (pos < 2 * (data.width - 2 + data.height - 2)) // left
-		return ((pos - 2 * data.width - data.height + 6) + 1) * data.width;
+		return (data.height - (pos - 2 * data.width - data.height + 6) - 2) * data.width;
 	else {
 		printf("BAD DOOR OFFSET!\n");
 		return -1;
