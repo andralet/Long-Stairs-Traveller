@@ -19,7 +19,7 @@ void make_map(FILE *out, MapSettings data) {
     // basic header
     fprintf(out, "{\"header\":{\"app\":\"RPG Map 2\",\"appVersion\":16.2,\"appAuthor\":\"Sebastien Benard\",\"fileType\":\"JSON Map\",\"fileVersion\":10,\"url\":\"https://deepnight.net/tools/rpg-map/\"},\n");
     fprintf(out, "\"version\":10,\"w\":%d,\"h\":%d,\n", data.width, data.height);
-	fprintf(out, "\"skin\":{\n\t\"base\":{\"bg\":5715237,\"appBg\":1052441,\"shadows\":425148975,\"stairs\":-1998203707,\"walls\":%d,\"dirt\":%d,\"doors\":15233090,\"windows\":6809278,\"fences\":11588072,\"furn\":13403491,\"wallOutline\":null,\"colorless\":false},\n", data.color.walls, data.color.dirt);
+	fprintf(out, "\"skin\":{\n\t\"base\":{\"bg\":5715237,\"appBg\":1052441,\"shadows\":425148975,\"stairs\":-1998203707,\"walls\":%d,\"dirt\":%d,\"doors\":15233090,\"windows\":6809278,\"fences\":11588072,\"furn\":13403491,\"wallOutline\":null,\"colorless\":false},\n", data.color.walls, data.color.stones); // dirt - stones
     fprintf(out, "\t\"plant1\":%d,\"plant2\":%d,\"water\":6657005,\"specialWater1\":16733696,\"specialWater2\":9478433,\"teint\":null,\n", data.color.plant1, data.color.plant2);
     fprintf(out, "\t\"grid\":{\"id\":3,\"p\":[]},\"gridColor\":16777215,\"gridIntensity\":0.2,\"gridDepth\":{\"id\":0,\"p\":[]},\n");
 	fprintf(out, "\t\"fogColor\":2433347,\"fogIntensity\":0,\"seed\":848627,\"printerFriendly\":false,\"bubbleSkin\":{\"id\":0,\"p\":[]}\n},\n");
@@ -64,12 +64,22 @@ void make_map(FILE *out, MapSettings data) {
     fprintf(out, "],\n");
 
     // filling ground tiles
-    fprintf(out, "\"grounds\":[{\"x\":1,\"y\":1,\"s\":{\"id\":%d,\"p\":[]},\"c\":null}", data.ground);
-    for (int i = 0; i < data.height; i++) {
-        for (int j = 0; j < data.width; j++) {
-            fprintf(out, ",{\"x\":%d,\"y\":%d,\"s\":{\"id\":%d,\"p\":[]},\"c\":null}", j, i, data.ground);
-        }
-    }
+	if (data.color.ground >= 0) {
+    	fprintf(out, "\"grounds\":[{\"x\":1,\"y\":1,\"s\":{\"id\":%d,\"p\":[]},\"c\":%d}", data.ground, data.color.ground);
+    	for (int i = 0; i < data.height; i++) {
+        	for (int j = 0; j < data.width; j++) {
+            	fprintf(out, ",{\"x\":%d,\"y\":%d,\"s\":{\"id\":%d,\"p\":[]},\"c\":%d}", j, i, data.ground, data.color.ground);
+        	}
+    	}
+	} else {
+		// use default color
+    	fprintf(out, "\"grounds\":[{\"x\":1,\"y\":1,\"s\":{\"id\":%d,\"p\":[]},\"c\":null}", data.ground);
+    	for (int i = 0; i < data.height; i++) {
+        	for (int j = 0; j < data.width; j++) {
+            	fprintf(out, ",{\"x\":%d,\"y\":%d,\"s\":{\"id\":%d,\"p\":[]},\"c\":null}", j, i, data.ground);
+        	}
+    	}
+	}
     fprintf(out, "],\n");
 	
     // planting trees...
@@ -146,42 +156,7 @@ void make_map(FILE *out, MapSettings data) {
 	fprintf(out, "],\n");
 
 	// nothing else for now
-    
-	/*
-			{
-			"x":36.6,
-			"y":9.75,
-			"s":"0",
-			"gm":false,
-			"font":{
-				"id":2,
-				"p":[
-					
-				]
-			},
-			"fontSize":{
-				"id":1,
-				"p":[
-					
-				]
-			},
-			"fontColor":16711680,
-			"display":{
-				"id":0,
-				"p":[
-					
-				]
-			},
-			"bubbleGX":-1,
-			"bubbleGY":-1,
-			"outline":{
-				"id":1,
-				"p":[
-					
-				]
-			}
-		}
-	*/
+	
     fprintf(out, "\"icons\":[],\n");
     fprintf(out, "\"lights\":[],\n");
     fprintf(out, "\"mobs\":[],\n");

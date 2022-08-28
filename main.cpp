@@ -7,11 +7,11 @@ const char *LANDING_NAME[LANDING_NUM] = {
     "Предел"
 };
 
-const int GEN_LOC_NUM = 3;
+const int GEN_LOC_NUM = 4;
 
 void show_info(const ConcreteLocation &l, int level, int map_quality) {
     printf("Уровень - %d\t", level);
-    printf("Качество карты - %d\n", map_quality);
+    printf("Качество карты - ±%.1lf%%\n", map_quality / 2.0);
     if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
         printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[level / LANDING_DIST]);
     }
@@ -55,6 +55,10 @@ int main(void) {
                 } else {
                     gen_doors(new_l, GEN_LOC_NUM, -1);
                     gen_troubles(new_l);
+                    if (new_l.troubles.empty()) {
+                        // greater chances for at least one trouble
+                        gen_troubles(new_l);
+                    }
                 }
                 print_loc(new_l, map_quality);
                 printf("Захлопнуть дверь?(-1 - да): ");
@@ -68,8 +72,36 @@ int main(void) {
                     level = new_level;
                 }
             }
+        } else if (!strcmp(cmd, "loc")) {
+            if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
+                printf("Ты в якорной точке, чудик!\n");
+            } else {
+                int loc_id = 0;
+                printf("ID (0-%d): ", LOC_NUM - 1);
+                scanf("%d", &loc_id);
+                if (loc_id >= 0 && loc_id < int(LOC_NUM)) {
+                    ConcreteLocation new_l = make_loc(loc_id);
+                    gen_doors(new_l, GEN_LOC_NUM, -1);
+                    gen_troubles(new_l);
+                    if (new_l.troubles.empty()) {
+                        // greater chances for at least one trouble
+                        gen_troubles(new_l);
+                    }
+                    print_loc(new_l, map_quality);
+                    printf("Отменить?(-1 - да): ");
+                    scanf("%d", &loc_id);
+                    if (loc_id >= 0) {
+                        printf("Удачи!\n");
+                        l = new_l;
+                    }
+                }
+            }
         } else if (!strcmp(cmd, "trouble")) {
             gen_troubles(l);
+            if (l.troubles.empty()) {
+                // greater chances for at least one trouble
+                gen_troubles(l);
+            }
             show_info(l, level, map_quality);
         } else if (!strcmp(cmd, "door")) {
             if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
@@ -112,7 +144,7 @@ int main(void) {
             load(l, level, map_quality, picture_id);
             show_info(l, level, map_quality);
         } else {
-            printf("Хелп: info - о локации, go - идти, trouble - перегенерировать особенности, door - перегенерировать двери, show - сгенерить json,\nmap - управление качеством карты, level - управление глубиной,\nsave/load - сохранить/загрузить игру, quit - сдаться\n");
+            printf("Хелп: info - о локации, go - идти,\nloc - перегенерировать локацию по id, trouble - перегенерировать особенности, door - перегенерировать двери,\nshow - сгенерить json,\nmap - управление качеством карты, level - управление глубиной,\nsave/load - сохранить/загрузить игру, quit - сдаться\n");
         }
         printf(">");
         scanf("%s", cmd);

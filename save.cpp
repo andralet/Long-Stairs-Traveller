@@ -11,7 +11,7 @@ void save(const ConcreteLocation &l, int level, int map_quality, int picture_id)
     }
 
     fprintf(out, "%d %d %d\n", level, map_quality, picture_id);
-    fprintf(out, "%d %d %d %d %d %d %d %d %lf\n", l.loc_id, l.x, l.y, l.z, l.door_num, l.plants, l.fluid, l.enemy, l.power);
+    fprintf(out, "%d %d %d %d %d %d %d %d %d\n", l.loc_id, l.x, l.y, l.z, l.door_num, l.plants, l.fluid, l.enemy, l.power);
     fprintf(out, "Door-%lu\n", l.doors.size());
     for (Door d : l.doors) {
         fprintf(out, "%d %d %d %lu:", d.up, d.same, d.down, d.chances.size());
@@ -40,7 +40,7 @@ void load(ConcreteLocation &l, int &level, int &map_quality, int &picture_id) {
     }
 
     fscanf(out, "%d %d %d\n", &level, &map_quality, &picture_id);
-    fscanf(out, "%d %d %d %d %d %d %d %d %lf\n", &l.loc_id, &l.x, &l.y, &l.z, &l.door_num, &l.plants, &l.fluid, &l.enemy, &l.power);
+    fscanf(out, "%d %d %d %d %d %d %d %d %d\n", &l.loc_id, &l.x, &l.y, &l.z, &l.door_num, &l.plants, &l.fluid, &l.enemy, &l.power);
     unsigned long door_num = 0;
     fscanf(out, "Door-%lu\n", &door_num);
     l.doors.clear();

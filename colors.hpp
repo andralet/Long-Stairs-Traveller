@@ -4,12 +4,13 @@
     #define RGB(r, g, b) ((r) * 0x10000 + (g) * 0x100 + (b))
     
     struct ColorMap {
-        int walls, dirt;
+        int walls, ground;
         int plant1, plant2;
+        int stones;
         int font;
     };
 
-    const ColorMap DEFAULT_COLORS = {13530947, 11562056, 6270751, 6270751, 16711680};
+    const ColorMap DEFAULT_COLORS = {13530947, -1, 6270751, 6270751, 11562056, 16711680};
 
     enum Color {
         RED = RGB(255, 0, 0),
