@@ -26,7 +26,7 @@
     int gen_range(int min, int max);
     const char *name_count(int count);
     struct ConcreteLocation make_loc(int loc_id);
-    void print_loc(ConcreteLocation l, int map_quality);
+    void print_loc(ConcreteLocation l, int map_quality, int level);
     struct Door create_door(unsigned loc_num, int landing_id);
     void gen_doors(struct ConcreteLocation &l, unsigned loc_num, int landing_id);
     void gen_troubles(struct ConcreteLocation &l);

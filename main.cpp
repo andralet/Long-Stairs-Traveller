@@ -16,7 +16,7 @@ void show_info(const ConcreteLocation &l, int level, int map_quality) {
     if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
         printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[level / LANDING_DIST]);
     }
-    print_loc(l, map_quality);
+    print_loc(l, map_quality, level);
 }
 
 int main(void) {
@@ -31,7 +31,7 @@ int main(void) {
     if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
         printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[level / LANDING_DIST]);
     }
-    print_loc(l, map_quality);
+    print_loc(l, map_quality, level);
 
     char cmd[256] = {};
     printf(">");
@@ -61,7 +61,7 @@ int main(void) {
                         gen_troubles(new_l);
                     }
                 }
-                print_loc(new_l, map_quality);
+                print_loc(new_l, map_quality, level);
                 printf("Захлопнуть дверь?(-1 - да): ");
                 scanf("%d", &door);
                 if (door < 0) {
@@ -83,7 +83,7 @@ int main(void) {
                     gen_troubles(new_l);
                 }
                 printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[level / LANDING_DIST]);
-                print_loc(new_l, map_quality);
+                print_loc(new_l, map_quality, level);
                 int ans = -1;
                 printf("Отменить?(-1 - да): ");
                 scanf("%d", &ans);
@@ -103,7 +103,7 @@ int main(void) {
                         // greater chances for at least one trouble
                         gen_troubles(new_l);
                     }
-                    print_loc(new_l, map_quality);
+                    print_loc(new_l, map_quality, level);
                     printf("Отменить?(-1 - да): ");
                     scanf("%d", &loc_id);
                     if (loc_id >= 0) {
@@ -142,7 +142,7 @@ int main(void) {
                     make_map(out, data);
                     fclose(out);
                     printf("DONE\n");
-                    printf("Сохраняйте по ссылке: https://dnd.alex2000.ru/alex/Data/Pictures/Карты/LongStairs/%d.png\n", picture_id);
+                    printf("Сохраняйте по ссылке: https://dnd.alex2000.ru/alex/Data/Pictures/Карты/LongStairs/%d.jpg\n", picture_id);
                     picture_id++;
                 }
             } else {
@@ -154,13 +154,16 @@ int main(void) {
         } else if (!strcmp(cmd, "level")) {
             printf("Текущая глубина - %d\nЗадайте новую: ", level);
             scanf("%d", &level);
+        } else if (!strcmp(cmd, "pic")) {
+            printf("Текущий id карты - %d\nЗадайте новый: ", picture_id);
+            scanf("%d", &picture_id);
         } else if (!strcmp(cmd, "save")) {
             save(l, level, map_quality, picture_id);
         } else if (!strcmp(cmd, "load")) {
             load(l, level, map_quality, picture_id);
             show_info(l, level, map_quality);
         } else {
-            printf("Хелп: info - о локации, go - идти,\nloc - перегенерировать локацию по id, trouble - перегенерировать особенности, door - перегенерировать двери,\nshow - сгенерить json,\nmap - управление качеством карты, level - управление глубиной,\nsave/load - сохранить/загрузить игру, quit - сдаться\n");
+            printf("Хелп:\n\tinfo - о локации, go - идти,\n\tПерегенерировать: loc - локацию по id, trouble - особенности, door - двери,\n\tshow - сгенерить json,\n\tУправление: map - качеством карты, level - глубиной, pic - id карты для отображения\n\tsave/load - сохранить/загрузить игру, quit - сдаться\n");
         }
         printf(">");
         scanf("%s", cmd);

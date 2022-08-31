@@ -107,7 +107,7 @@
         {-1, 50, 50, 20, 2, 0, 0, 0, 8, 20, {}, {}}
     };
 
-    const unsigned TROUBLE_NUM = 121,
-                   MAX_TROUBLES = 6;
+    const unsigned TROUBLE_NUM = 193,
+                   MAX_TROUBLES = 4;
     
 #endif
