@@ -126,6 +126,23 @@ int main(void) {
                 gen_doors(l, GEN_LOC_NUM, -1);
             }
             show_info(l, level, map_quality);
+        } else if (!strcmp(cmd, "focus")) {
+            printf("Какой меняем (0 - 1ый, 1 - 2ой, 2 - оба)? ");
+            int ans = -1;
+            scanf("%d", &ans);
+            if (ans == 2) {
+                l.focus[0] = rand() % FOCUS_NUM;
+                do {
+                    l.focus[1] = rand() % FOCUS_NUM;
+                } while (l.focus[1] == l.focus[0]);
+            } else if (ans == 0 || ans == 1) {
+                do {
+                    l.focus[ans] = rand() % FOCUS_NUM;
+                } while (l.focus[ans] == l.focus[!ans]);
+            } else {
+                printf("Неверный ввод!\n");
+            }
+            show_info(l, level, map_quality);
         } else if (!strcmp(cmd, "show")) {
             FILE *out = fopen("showed_map.json", "w");
             MapSettings data = {};
@@ -163,7 +180,7 @@ int main(void) {
             load(l, level, map_quality, picture_id);
             show_info(l, level, map_quality);
         } else {
-            printf("Хелп:\n\tinfo - о локации, go - идти,\n\tПерегенерировать: loc - локацию по id, trouble - особенности, door - двери,\n\tshow - сгенерить json,\n\tУправление: map - качеством карты, level - глубиной, pic - id карты для отображения\n\tsave/load - сохранить/загрузить игру, quit - сдаться\n");
+            printf("Хелп:\n\tinfo - о локации, go - идти,\n\tПерегенерировать: loc - локацию по id, trouble - особенности, door - двери, focus - фокус монстров\n\tshow - сгенерить json,\n\tУправление: map - качеством карты, level - глубиной, pic - id карты для отображения\n\tsave/load - сохранить/загрузить игру, quit - сдаться\n");
         }
         printf(">");
         scanf("%s", cmd);

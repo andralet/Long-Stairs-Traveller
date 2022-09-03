@@ -3,6 +3,7 @@
 /* Формат сохранения:
 <глубина> <качество карты (в процентах * 2)> <id картинки для генерации>
 <тип локации> <XxYxZ в клетках> <число дверей (кроме входной)> <#растений> <#жидкости> <#камней> <#врагов> <модификатор силы врагов * 10>
+<первый фокус> <второй фокус>
 Door-<число описанных дверей>
 <описания дверей по 1 в строке: вероятности вверх, на уровне, вниз, число локаций и вероятности для каждой из них>
 Trouble-<число особенностей>
@@ -21,6 +22,7 @@ void save(const ConcreteLocation &l, int level, int map_quality, int picture_id)
 
     fprintf(out, "%d %d %d\n", level, map_quality, picture_id);
     fprintf(out, "%d %d %d %d %d %d %d %d %d %d\n", l.loc_id, l.x, l.y, l.z, l.door_num, l.plants, l.fluid, l.stones, l.enemy, l.power);
+    fprintf(out, "%d %d\n", l.focus[0], l.focus[1]);
     fprintf(out, "Door-%lu\n", l.doors.size());
     for (Door d : l.doors) {
         fprintf(out, "%d %d %d %lu:", d.up, d.same, d.down, d.chances.size());
@@ -50,6 +52,7 @@ void load(ConcreteLocation &l, int &level, int &map_quality, int &picture_id) {
 
     fscanf(out, "%d %d %d\n", &level, &map_quality, &picture_id);
     fscanf(out, "%d %d %d %d %d %d %d %d %d %d\n", &l.loc_id, &l.x, &l.y, &l.z, &l.door_num, &l.plants, &l.fluid, &l.stones, &l.enemy, &l.power);
+    fscanf(out, "%d %d\n", &l.focus[0], &l.focus[1]);
     unsigned long door_num = 0;
     fscanf(out, "Door-%lu\n", &door_num);
     l.doors.clear();

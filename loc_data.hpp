@@ -44,6 +44,7 @@
         int plants, fluid;
         int stones;
         int enemy, power;
+        int focus[2];
         std::vector<Door> doors;
         std::set<int> troubles;
     };
@@ -100,14 +101,16 @@
     const unsigned LANDING_DIST = 3,
                    LANDING_NUM = 5;
     const struct ConcreteLocation LANDING[LANDING_NUM] = {
-        {-1, 10, 10, 50, 4, 0, 0, 0, 0, 0, {}, {}},
-        {-1, 80, 80, 30, 10, 0, 0, 0, 7, 10, {}, {}},
-        {-1, 60, 60, 5, 6, 4, 1, 1, 8, 15, {}, {}},
-        {-1, 100, 100, 30, 10, 2, 1, 0, 3, 0, {}, {}},
-        {-1, 50, 50, 20, 2, 0, 0, 0, 8, 20, {}, {}}
+        {-1, 10, 10, 50, 4, 0, 0, 0, 0, 0, {}, {}, {}},
+        {-1, 80, 80, 30, 10, 0, 0, 0, 7, 10, {}, {}, {}},
+        {-1, 60, 60, 5, 6, 4, 1, 1, 8, 15, {}, {}, {}},
+        {-1, 100, 100, 30, 10, 2, 1, 0, 3, 0, {}, {}, {}},
+        {-1, 50, 50, 20, 2, 0, 0, 0, 8, 20, {}, {}, {}}
     };
 
-    const unsigned TROUBLE_NUM = 193,
-                   MAX_TROUBLES = 4;
+    const unsigned TROUBLE_NUM = 196,
+                   MAX_TROUBLES = 4,
+                   
+                   FOCUS_NUM = 14;
     
 #endif
