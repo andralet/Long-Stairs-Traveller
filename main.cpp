@@ -10,9 +10,28 @@ const char *LANDING_NAME[LANDING_NUM] = {
 
 const int GEN_LOC_NUM = 4;
 
-void show_info(const ConcreteLocation &l, int level, int map_quality) {
-    printf("Уровень - %d\t", level);
-    printf("Качество карты - ±%.1lf%%\n", map_quality / 2.0);
+const int LUCK_LEVEL_NUM = 7;
+const char *LUCK_LEVELS[LUCK_LEVEL_NUM] = {
+    "Отвратительное",
+    "Так себе",
+    "Терпимое",
+    "Норм",
+    "Приятное",
+    "Существенное",
+    "Шикарное"
+};
+
+void show_info(const ConcreteLocation &l, int level, int map_quality, int goal, int luck) {
+    printf("Уровень - %d\tЦель - %d\n", level, goal);
+    const char *luck_level;
+    if (luck >= MAX_PROBABILITY) {
+        luck_level = "Умопомрачительное";
+    } else if (luck < 0) {
+        luck_level = "Антиумопомрачительное";
+    } else {
+        luck_level = LUCK_LEVELS[luck / (MAX_PROBABILITY / (LUCK_LEVEL_NUM))];
+    }
+    printf("Качество карты - ±%.1lf%%\tВезение - %s\n", map_quality / 2.0, luck_level);
     if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
         printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[level / LANDING_DIST]);
     }
@@ -23,45 +42,43 @@ int main(void) {
     srand(time(NULL));
 
     ConcreteLocation l = LANDING[0];
-    int level = 0;
+    int level = 0, goal = 30;
     int map_quality = 10;
     int picture_id = 0;
+    int luck = BASIC_LUCK;
 
-    gen_doors(l, GEN_LOC_NUM, 0);
-    if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
-        printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[level / LANDING_DIST]);
-    }
-    print_loc(l, map_quality, level);
+    gen_doors(l, GEN_LOC_NUM, level, goal, luck);
+    show_info(l, level, map_quality, goal, luck);
 
     char cmd[256] = {};
     printf(">");
     scanf("%s", cmd);
     while (cmd[0] != 'q') {
         if (!strcmp(cmd, "info")) {
-            show_info(l, level, map_quality);
+            show_info(l, level, map_quality, goal, luck);
         } else if (!strcmp(cmd, "go")) {
             int door = 0;
-            printf("Дверь (0-%d): ", l.door_num - 1);
+            // printf("Дверь (0-%d): ", l.door_num - 1);
             scanf("%d", &door);
             if (door >= 0 && door < l.door_num) {
                 int new_level = level;
-                int new_loc_id = use_door(l, door, new_level);
+                int new_loc_id = use_door(l, door, new_level, goal, luck);
                 if (new_loc_id == -1)
                     return 1;
                 ConcreteLocation new_l = make_loc(new_loc_id);
                 if (new_level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
                     new_l = LANDING[new_level / LANDING_DIST];
+                    gen_doors(new_l, GEN_LOC_NUM, new_level, goal, luck);
                     printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[new_level / LANDING_DIST]);
-                    gen_doors(new_l, GEN_LOC_NUM, new_level / LANDING_DIST);
                 } else {
-                    gen_doors(new_l, GEN_LOC_NUM, -1);
+                    gen_doors(new_l, GEN_LOC_NUM, new_level, goal, luck);
                     gen_troubles(new_l);
                     if (new_l.troubles.empty()) {
                         // greater chances for at least one trouble
                         gen_troubles(new_l);
                     }
                 }
-                print_loc(new_l, map_quality, level);
+                show_info(new_l, new_level, map_quality, goal, luck);
                 printf("Захлопнуть дверь?(-1 - да): ");
                 scanf("%d", &door);
                 if (door < 0) {
@@ -71,12 +88,16 @@ int main(void) {
                     printf("Удачи!\n");
                     l = new_l;
                     level = new_level;
+                    if (level == goal && goal > 0) {
+                        printf("Ура!!! Цель достигнута!!! Новая цель - Hellmouth:)\n");
+                        goal = 0;
+                    }
                 }
             }
         } else if (!strcmp(cmd, "loc")) {
             if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
                 ConcreteLocation new_l = LANDING[level / LANDING_DIST];
-                gen_doors(new_l, GEN_LOC_NUM, level / LANDING_DIST);
+                gen_doors(new_l, GEN_LOC_NUM, level, goal, luck);
                 gen_troubles(new_l);
                 if (new_l.troubles.empty()) {
                     // greater chances for at least one trouble
@@ -97,7 +118,7 @@ int main(void) {
                 scanf("%d", &loc_id);
                 if (loc_id >= 0 && loc_id < int(LOC_NUM)) {
                     ConcreteLocation new_l = make_loc(loc_id);
-                    gen_doors(new_l, GEN_LOC_NUM, -1);
+                    gen_doors(new_l, GEN_LOC_NUM, level, goal, luck);
                     gen_troubles(new_l);
                     if (new_l.troubles.empty()) {
                         // greater chances for at least one trouble
@@ -118,14 +139,10 @@ int main(void) {
                 // greater chances for at least one trouble
                 gen_troubles(l);
             }
-            show_info(l, level, map_quality);
+            show_info(l, level, map_quality, goal, luck);
         } else if (!strcmp(cmd, "door")) {
-            if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
-                gen_doors(l, GEN_LOC_NUM, level / LANDING_DIST);
-            } else {
-                gen_doors(l, GEN_LOC_NUM, -1);
-            }
-            show_info(l, level, map_quality);
+            gen_doors(l, GEN_LOC_NUM, level, goal, luck);
+            show_info(l, level, map_quality, goal, luck);
         } else if (!strcmp(cmd, "focus")) {
             printf("Какой меняем (0 - 1ый, 1 - 2ой, 2 - оба)? ");
             int ans = -1;
@@ -142,7 +159,7 @@ int main(void) {
             } else {
                 printf("Неверный ввод!\n");
             }
-            show_info(l, level, map_quality);
+            show_info(l, level, map_quality, goal, luck);
         } else if (!strcmp(cmd, "show")) {
             FILE *out = fopen("showed_map.json", "w");
             MapSettings data = {};
@@ -165,6 +182,12 @@ int main(void) {
             } else {
                 printf("Рисуй сам, ленивый ты ДМ!!!\n");
             }
+        } else if (!strcmp(cmd, "goal")) {
+            printf("Текущая цель - %d\nЗадайте новую: ", goal);
+            scanf("%d", &goal);
+        } else if (!strcmp(cmd, "luck")) {
+            printf("Текущая удача - %d\nЗадайте новую (%d<=>100%%): ", luck, MAX_PROBABILITY);
+            scanf("%d", &luck);
         } else if (!strcmp(cmd, "map")) {
             printf("Текущее качество - %d\nЗадайте новое: ", map_quality);
             scanf("%d", &map_quality);
@@ -175,12 +198,12 @@ int main(void) {
             printf("Текущий id карты - %d\nЗадайте новый: ", picture_id);
             scanf("%d", &picture_id);
         } else if (!strcmp(cmd, "save")) {
-            save(l, level, map_quality, picture_id);
+            save(l, level, map_quality, picture_id, goal, luck);
         } else if (!strcmp(cmd, "load")) {
-            load(l, level, map_quality, picture_id);
-            show_info(l, level, map_quality);
+            load(l, level, map_quality, picture_id, goal, luck);
+            show_info(l, level, map_quality, goal, luck);
         } else {
-            printf("Хелп:\n\tinfo - о локации, go - идти,\n\tПерегенерировать: loc - локацию по id, trouble - особенности, door - двери, focus - фокус монстров\n\tshow - сгенерить json,\n\tУправление: map - качеством карты, level - глубиной, pic - id карты для отображения\n\tsave/load - сохранить/загрузить игру, quit - сдаться\n");
+            printf("Хелп:\n\tinfo - о локации, go - идти,\n\tПерегенерировать: loc - локацию по id, trouble - особенности, door - двери, focus - фокус монстров\n\tshow - сгенерить json,\n\tУправление: goal - целью, luck - удачей, map - качеством карты, level - глубиной, pic - id карты для отображения\n\tsave/load - сохранить/загрузить игру, quit - сдаться\n");
         }
         printf(">");
         scanf("%s", cmd);

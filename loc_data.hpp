@@ -73,11 +73,11 @@
         {"Стальная комната",10, 40, 5,      0, 0,   0, 0,   0, 6,   2, 10,  0, 10, "Нет", "Роботы", {5, 5, IRON_FLOOR, SQUARE_WALLS, 0, 0, 0, 0,
             {DEFAULT_COLORS.walls, DEFAULT_COLORS.ground, DEFAULT_COLORS.plant1, DEFAULT_COLORS.plant2, DEFAULT_COLORS.stones, DEFAULT_COLORS.font}}},
         /*              [size],     door,   [plant],[fluid],[stones],[enemy],[power] */
-        {"Степь",       10, 50,     10,     1, 4,   0, 5,   0, 6,   0, 8,  -10, 10, "Вода", "Звери или кобольды", {5, 5, GRASS, SQUARE_WALLS, 0, 0, 0, 0,
+        {"Степь",       10, 50,     10,     1, 4,   0, 5,   0, 6,   0, 8,  -10, 0, "Вода", "Звери или дракониды", {5, 5, GRASS, SQUARE_WALLS, 0, 0, 0, 0,
             {DEFAULT_COLORS.walls, 10648612, 16247839, 13717504, DEFAULT_COLORS.stones, DEFAULT_COLORS.font}}},
         {"Деревянная комната",10,40,5,      0, 5,   0, 2,   0, 3,   0, 8,  -10, 0, "Вода", "Растения или роботы", {5, 5, WOOD_BOARDS, SQUARE_WALLS, 0, 0, 0, 0,
             {DEFAULT_COLORS.walls, DEFAULT_COLORS.ground, DEFAULT_COLORS.plant1, DEFAULT_COLORS.plant2, DEFAULT_COLORS.stones, DEFAULT_COLORS.font}}},
-        {"Пещера",      10, 50,     6,      0, 3,   0, 3,   0, 8,   0, 10, -5, 20, "Вода", "Монстры, звери или гоблиноиды", {5, 5, GROUND, CAVERN_WALLS, 0, 0, 0, 0,
+        {"Пещера",      10, 50,     6,      0, 3,   0, 3,   0, 8,   0, 10, 0, 10, "Вода", "Монстры, звери или гоблиноиды", {5, 5, GROUND, CAVERN_WALLS, 0, 0, 0, 0,
             {DEFAULT_COLORS.walls, DEFAULT_COLORS.ground, DEFAULT_COLORS.plant1, DEFAULT_COLORS.plant2, DEFAULT_COLORS.stones, DEFAULT_COLORS.font}}},
         {"Площадь",     30, 70,     10,     0, 2,   0, 1,   0, 1,   0, 10, -10, 10, "Вода", "Роботы", {5, 5, COBBLESTONE, DIAGONAL_WALLS, 0, 0, 0, 0,
             {DEFAULT_COLORS.walls, DEFAULT_COLORS.ground, DEFAULT_COLORS.plant1, DEFAULT_COLORS.plant2, DEFAULT_COLORS.stones, DEFAULT_COLORS.font}}},
@@ -86,9 +86,9 @@
         /*              [size],     door,   [plant],[fluid],[stones],[enemy],[power] */
         {"Пустая комната",10, 50,   4,      0, 0,   0, 0,   0, 0,   0, 0,  0, 0, "Нет", "Нет", {5, 5, DIRT_ROAD, SQUARE_WALLS, 0, 0, 0, 0,
             {DEFAULT_COLORS.walls, DEFAULT_COLORS.ground, DEFAULT_COLORS.plant1, DEFAULT_COLORS.plant2, DEFAULT_COLORS.stones, DEFAULT_COLORS.font}}},
-        {"Зимний лес",  30, 50,     7,      6, 10,  2, 7,   0, 5,   0, 10,  -10, 10, "Вода", "Звери, монстры или лесные жители", {5, 5, GRASS, CAVERN_WALLS, 0, 0, 0, 0,
+        {"Зимний лес",  30, 50,     7,      6, 10,  2, 7,   0, 5,   0, 10,  -5, 20, "Вода", "Звери, монстры или лесные жители", {5, 5, GRASS, CAVERN_WALLS, 0, 0, 0, 0,
             {12895180, 12895180, 13168125, 11643647, DEFAULT_COLORS.stones, DEFAULT_COLORS.font}}}, // перекрасить в снежные тона
-        {"Вулкан",      10, 50,     10,     0, 3,   0, 2,   0, 8,   0, 6,   -10, 10, "Лава или вода", "Дракониды, демоны, элементали огня или земли", {5, 5, SAND, SQUARE_WALLS, 0, 0, 0, 0,
+        {"Вулкан",      10, 50,     10,     0, 3,   0, 2,   0, 8,   2, 6,   0, 15, "Лава или вода", "Дракониды, демоны, элементали огня или земли", {5, 5, SAND, SQUARE_WALLS, 0, 0, 0, 0,
             {7817521, 4538409, 0x58260b, 0x4c220c, 7817521, DEFAULT_COLORS.font}}}, // песок - пепел
         {"Стеклянная комната",10,40,5,      0, 0,   0, 3,   0, 5,   0, 10,  -20, 20, "Вода", "Монстры или роботы", {5, 5, SWAMP, SQUARE_WALLS, 0, 0, 0, 0,
             {2206670, 9567487, 9567487, 1421225, 2206670, DEFAULT_COLORS.font}}},
@@ -98,7 +98,7 @@
         
     };
 
-    const unsigned LANDING_DIST = 3,
+    const unsigned LANDING_DIST = 4,
                    LANDING_NUM = 5;
     const struct ConcreteLocation LANDING[LANDING_NUM] = {
         {-1, 10, 10, 50, 4, 0, 0, 0, 0, 0, {}, {}, {}},
@@ -108,7 +108,7 @@
         {-1, 50, 50, 20, 2, 0, 0, 0, 8, 20, {}, {}, {}}
     };
 
-    const unsigned TROUBLE_NUM = 196,
+    const unsigned TROUBLE_NUM = 231,
                    MAX_TROUBLES = 4,
                    
                    FOCUS_NUM = 14;

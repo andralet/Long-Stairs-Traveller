@@ -1,7 +1,7 @@
 #include "stat.hpp"
 
 /* Формат сохранения:
-<глубина> <качество карты (в процентах * 2)> <id картинки для генерации>
+<глубина> <качество карты (в процентах * 2)> <id картинки для генерации> <цель> <удача>
 <тип локации> <XxYxZ в клетках> <число дверей (кроме входной)> <#растений> <#жидкости> <#камней> <#врагов> <модификатор силы врагов * 10>
 <первый фокус> <второй фокус>
 Door-<число описанных дверей>
@@ -10,7 +10,7 @@ Trouble-<число особенностей>
 <id особенностей по 1 в строке>
 */
 
-void save(const ConcreteLocation &l, int level, int map_quality, int picture_id) {
+void save(const ConcreteLocation &l, int level, int map_quality, int picture_id, int goal, int luck) {
     char filepath[256];
     printf("Куда: ");
     scanf("%s", filepath);
@@ -20,7 +20,7 @@ void save(const ConcreteLocation &l, int level, int map_quality, int picture_id)
         return;
     }
 
-    fprintf(out, "%d %d %d\n", level, map_quality, picture_id);
+    fprintf(out, "%d %d %d %d %d\n", level, map_quality, picture_id, goal, luck);
     fprintf(out, "%d %d %d %d %d %d %d %d %d %d\n", l.loc_id, l.x, l.y, l.z, l.door_num, l.plants, l.fluid, l.stones, l.enemy, l.power);
     fprintf(out, "%d %d\n", l.focus[0], l.focus[1]);
     fprintf(out, "Door-%lu\n", l.doors.size());
@@ -40,7 +40,7 @@ void save(const ConcreteLocation &l, int level, int map_quality, int picture_id)
     printf("DONE\n");
 }
 
-void load(ConcreteLocation &l, int &level, int &map_quality, int &picture_id) {
+void load(ConcreteLocation &l, int &level, int &map_quality, int &picture_id, int &goal, int &luck) {
     char filepath[256];
     printf("Откуда: ");
     scanf("%s", filepath);
@@ -50,7 +50,7 @@ void load(ConcreteLocation &l, int &level, int &map_quality, int &picture_id) {
         return;
     }
 
-    fscanf(out, "%d %d %d\n", &level, &map_quality, &picture_id);
+    fscanf(out, "%d %d %d %d %d\n", &level, &map_quality, &picture_id, &goal, &luck);
     fscanf(out, "%d %d %d %d %d %d %d %d %d %d\n", &l.loc_id, &l.x, &l.y, &l.z, &l.door_num, &l.plants, &l.fluid, &l.stones, &l.enemy, &l.power);
     fscanf(out, "%d %d\n", &l.focus[0], &l.focus[1]);
     unsigned long door_num = 0;

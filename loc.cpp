@@ -1,6 +1,6 @@
 #include "stat.hpp"
 
-const char *TROUBLES[] = {
+const char *TROUBLES[TROUBLE_NUM] = {
     "Слабый туман (40 фт зрения)",
     "Сильный туман (20 фт зрения)",
     "Жутчайший туман (5 фт зрения)",
@@ -134,7 +134,7 @@ const char *TROUBLES[] = {
     "До выхода всё снаряжение всех членов отряда невидимо",
     // 120
     "Цель миссии находится в этой комнате",
-    "До выхода все члены отряда нематериальны и не могут влиять на окружающий мир, кроме как посредством магии (за исключением открытия дверей",
+    "До выхода все члены отряда нематериальны и не могут влиять на окружающий мир, кроме как посредством магии (за исключением открытия дверей)",
     "Согласно RDP все члены отряда должны непереставая молиться",
     "Согласно RDP все члены отряда должны говорить стихами",
     "Выстрелы из \"воображаемого\" оружия наносят реальный урон",
@@ -144,7 +144,7 @@ const char *TROUBLES[] = {
     "Весь получаемый отрядом урон до вычета брони переносится на капитана (не игнорирует его броню)",
     "Весь получаемый отрядом урон до вычета брони переносится на медика (не игнорирует его броню)",
     // 130
-    "Весь получаемый отрядом урон до вычета брони переносится на новичка (не игнорирует его броню)"
+    "Весь получаемый отрядом урон до вычета брони переносится на новичка (не игнорирует его броню)",
     "Весь получаемый отрядом урон после вычета брони переносится на капитана (игнорирует его броню)",
     "Весь получаемый отрядом урон после вычета брони переносится на медика (игнорирует его броню)",
     "Весь получаемый отрядом урон после вычета брони переносится на новичка (игнорирует его броню)",
@@ -172,9 +172,9 @@ const char *TROUBLES[] = {
     "Здесь жутчайший туман (5 фт зрения), в котором обитает жуткий туманный монстр силы +2",
     "ДМ делает бросок по любимой таблице дикой магии и применяет эффект до выхода из комнаты",
     "ДМ делает бросок по любимой таблице дикой магии и применяет эффект до входа в якорную точку",
-    "Первый, к кому обращаются по имени немедленно падает в обморок",
-    "Первый, к кому обращаются по имени немедленно восстанавливает 10 хитов",
-    "Первый, к кому обращаются по имени немедленно умирает. Воскресает при выходе из комнаты",
+    "Первый, к кому обращаются по имени, немедленно падает в обморок",
+    "Первый, к кому обращаются по имени, немедленно восстанавливает 10 хитов",
+    "Первый, к кому обращаются по имени, немедленно умирает. Воскресает при выходе из комнаты",
     "Всё, что происходит в этой комнате, слышно существам в следующей",
     // 160
     "Все существа в комнате не понимают устной речи",
@@ -234,12 +234,30 @@ const char *TROUBLES[] = {
     // 210
     "Согласно RDP вам запрещено смотреть за дверь, пока не пройдёте через неё",
     "Согласно RDP капитан должен сказать \"Ой, извините, дверью ошиблись!\", немедленно развернуться и вернутся в прошлую комнату (ДА! Через ВХОДНУЮ дверь! Это НЕ ОПИСКА!)",
-    "К пати тихо присоединяется Боб (спутник-антимем)",
-    "К пати заметно присоединяется Боб (спутник-антимем)",
-    "Пати находит документ, заражённый Вальтером (искажение текстов)"
+    "К отряду тихо присоединяется Боб (спутник-антимем)",
+    "К отряду заметно присоединяется Боб (спутник-антимем)",
+    "Отряд находит документ, заражённый Вальтером (искажение текстов)",
+    "Согласно RDP вы должны обращаться к другим существам с максимальным уважением: на Вы и добавляя к каждому обращению \"достопочтенный\"",
+    "Все монстры в комнате кажутся милыми и добрыми, хотя на самом деле таковыми не являются",
+    "Все монстры в комнате кажутся милыми и добрыми, и на самом деле являются таковыми (готовы помочь отряду, если это не связано с прохождением через двери)",
+    "Всем членам отряда кажется, что их снаряжение исчезло, но на самом деле это не так",
+    "Снаряжение всех членов отряда исчезает, но каждый уверен, что его снаряжение на месте",
+    // 220
+    "Ваше личное снаряжение в этой комнате будет неэффективно. Согласно RDP вам следует обменяться им с другими членами отряда",
+    "В этой комнате нечто, вполне способное устроить ТПК (гигантский сборный голем, древний дракон, Fel Seed и т.п.)",
+    "Когда в комнате кто-то говорит об истинности некоторого факта, этот факт в ней немедленно становится ложным",
+    "Члены отряда засыпают через 10 секунд после входа в комнату. Они просыпаются раздетыми и связанными в разных углах комнаты, освободиться сам может лишь один из них",
+    "Мужчины и женщины воспринимают разные части противников в комнате (хотя по количеству их поровну); антимеметический эффект",
+    "Комната наводнена враждебными мимиками",
+    "Комната наводнена нейтральными мимиками",
+    "Комната наводнена дружелюбными мимиками",
+    "В комнате невесомость",
+    "Все существа в комнате, кроме отряда, крепко спят",
+    // 230
+    "Все существа в комнате, включая отряд, непрерывно поют"
 };
 
-const char *FOCUSES[] = {
+const char *FOCUSES[FOCUS_NUM] = {
     "Нет",
     "Рукопашный бой",
     "Дальний бой",
@@ -305,9 +323,11 @@ void print_loc(ConcreteLocation l, int map_quality, int level) {
     printf("Жидкость: %d<%s>\t", l.fluid, name_count(l.fluid));
     printf("Камни: %d<%s>\n", l.stones, name_count(l.stones));
     printf("Противники: %d<%s>\t", l.enemy, name_count(l.enemy));
-    printf("Модификатор силы противников: %+.2lf (из них %+.2lf от глубины)\n", l.power / 10.0 + level / LANDING_DIST * 0.25, level / LANDING_DIST * 0.25);
     if (l.loc_id >= 0) {
+        printf("Модификатор силы противников: %+.2lf (из них %+.2lf от глубины)\n", l.power / 10.0 + int(level / LANDING_DIST) * 0.25, level / LANDING_DIST * 0.25);
         printf("Типичная жидкость: %s\tТипичные существа: %s\n", LOC[l.loc_id].common_fluid, LOC[l.loc_id].common_enemy);
+    } else {
+        printf("Модификатор силы противников: %+.2lf\n", l.power / 10.0);
     }
     if (l.focus[0] || l.focus[1]) {
         // mostly inspiration
@@ -349,7 +369,7 @@ void print_loc(ConcreteLocation l, int map_quality, int level) {
     }
 }
 
-struct Door create_door(unsigned loc_num, int landing_id) {
+struct Door create_door(unsigned loc_num, int landing_id, int up_buff) {
     struct Door res = {};
     if (loc_num > LOC_NUM)
         return res;
@@ -368,7 +388,7 @@ struct Door create_door(unsigned loc_num, int landing_id) {
     }
     
     global_probability = MAX_PROBABILITY;
-    if (rand() % 2 == 0) {
+    if (rand() % MAX_PROBABILITY - up_buff < MAX_PROBABILITY / 2) {
         // up-directed
         if (landing_id != 0) {
             res.up = rand() % global_probability + 1;
@@ -395,10 +415,18 @@ struct Door create_door(unsigned loc_num, int landing_id) {
     return res;
 }
 
-void gen_doors(struct ConcreteLocation &l, unsigned loc_num, int landing_id) {
+void gen_doors(struct ConcreteLocation &l, unsigned loc_num, int level, int goal, int luck) {
+    int up_buff = (luck - MAX_PROBABILITY / 2) / 4;
+    if (0 < level && level < goal) {
+        up_buff *= -1; // we shall buff down, not up
+    }
     l.doors.clear();
     for (int i = 0; i < l.door_num; i++) {
-        l.doors.push_back(create_door(loc_num, landing_id));
+        if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
+            l.doors.push_back(create_door(loc_num, level / LANDING_DIST, up_buff));
+        } else {
+            l.doors.push_back(create_door(loc_num, -1, up_buff));
+        }
     }
 }
 
@@ -413,19 +441,78 @@ void gen_troubles(struct ConcreteLocation &l) {
     }
 }
 
-int use_door(const struct ConcreteLocation &l, unsigned door_id, int &level) {
+int use_door(const struct ConcreteLocation &l, unsigned door_id, int &level, int &goal, int &luck) {
     if (door_id >= l.doors.size())
         return -1;
     // else
     int res_prob = rand() % MAX_PROBABILITY;
+    int luck_left = luck;
+    if (level < goal && level > 0) {
+        if (l.doors[door_id].up + l.doors[door_id].same > res_prob) {
+            while (luck_left > 0) {
+                if (rand() % MAX_PROBABILITY <= luck_left) {
+                    printf("ШАНС! ");
+                    luck -= LUCK_STABILISER;
+                    res_prob = std::max(res_prob, rand() % MAX_PROBABILITY);
+                }
+                luck_left -= MAX_PROBABILITY;
+            }
+        } else {
+            while (luck_left < MAX_PROBABILITY) {
+                if (rand() % MAX_PROBABILITY > luck_left) {
+                    printf("Упс... ");
+                    luck += LUCK_STABILISER;
+                    res_prob = std::min(res_prob, rand() % MAX_PROBABILITY);
+                }
+                luck_left += MAX_PROBABILITY;
+            }
+        }
+    } else if (level > goal) {
+        if (l.doors[door_id].up + l.doors[door_id].same > res_prob) {
+            while (luck_left < MAX_PROBABILITY) {
+                if (rand() % MAX_PROBABILITY > luck_left) {
+                    printf("Упс... ");
+                    luck += LUCK_STABILISER;
+                    res_prob = std::max(res_prob, rand() % MAX_PROBABILITY);
+                }
+                luck_left += MAX_PROBABILITY;
+            }
+        } else {
+            while (luck_left > 0) {
+                if (rand() % MAX_PROBABILITY <= luck_left) {
+                    printf("ШАНС! ");
+                    luck -= LUCK_STABILISER;
+                    res_prob = std::min(res_prob, rand() % MAX_PROBABILITY);
+                }
+                luck_left -= MAX_PROBABILITY;
+            }
+        }
+    }
+
     if (l.doors[door_id].up > res_prob) {
+        if (0 < level && level < goal) {
+            luck += LUCK_BUFF;
+            // if (luck > MAX_PROBABILITY) luck = MAX_PROBABILITY;
+        } else if (level > goal) {
+            luck -= LUCK_DEBUFF;
+            // if (luck < 0) luck = 0;
+        }
         level--;
-        printf("Поднялись на %d! (%.2lf%%)\n", level, 100.0 * l.doors[door_id].up / MAX_PROBABILITY);
+        printf("Поднялись на %d%s (%.2lf%%)\n", level, (level >= goal ? "!" : ":("), 100.0 * l.doors[door_id].up / MAX_PROBABILITY);
     } else if (l.doors[door_id].up + l.doors[door_id].same > res_prob) {
         printf("На уровне (%.2lf%%)\n", 100.0 * l.doors[door_id].same / MAX_PROBABILITY);
+        luck += LUCK_ON_EVEN;
+        // if (luck > MAX_PROBABILITY) luck = MAX_PROBABILITY;
     } else {
+        if (0 < level && level < goal) {
+            luck -= LUCK_DEBUFF;
+            // if (luck < 0) luck = 0;
+        } else if (level > goal) {
+            luck += LUCK_BUFF;
+            // if (luck > MAX_PROBABILITY) luck = MAX_PROBABILITY;
+        }
         level++;
-        printf("Опустились на %d:( (%.2lf%%)\n", level, 100.0 * l.doors[door_id].down / MAX_PROBABILITY);
+        printf("Опустились на %d%s (%.2lf%%)\n", level, (level <= goal ? "!" : ":("), 100.0 * l.doors[door_id].down / MAX_PROBABILITY);
     }    
 
     res_prob = rand() % MAX_PROBABILITY;
