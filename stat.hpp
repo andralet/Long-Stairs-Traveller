@@ -15,14 +15,16 @@
     const int RARE_LIMIT = 3,
               NORMAL_LIMIT = 6,
               OFTEN_LIMIT = 9;
+
+    const int MAX_SKULLS = 5;
     
     const int MAX_PROBABILITY = 1000000,
               TROUBLE_CHANCE = MAX_PROBABILITY / 2,
               BASIC_LUCK = MAX_PROBABILITY / 2,
-              LUCK_BUFF = MAX_PROBABILITY / 100 * 30,
-              LUCK_ON_EVEN = LUCK_BUFF / 3,
-              LUCK_DEBUFF = LUCK_BUFF / 3,
-              LUCK_STABILISER = LUCK_BUFF / 3;
+              LUCK_BUFF = MAX_PROBABILITY / 100 * 40,
+              LUCK_ON_EVEN = LUCK_BUFF / 2,
+              LUCK_DEBUFF = LUCK_BUFF / 4,
+              LUCK_STABILISER = LUCK_BUFF / 2;
 
     // loc_data
     #include "loc_data.hpp"

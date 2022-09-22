@@ -254,7 +254,30 @@ const char *TROUBLES[TROUBLE_NUM] = {
     "В комнате невесомость",
     "Все существа в комнате, кроме отряда, крепко спят",
     // 230
-    "Все существа в комнате, включая отряд, непрерывно поют"
+    "Все существа в комнате, включая отряд, непрерывно поют",
+    "Периодически в потолке открываются люки, и оттуда высовываются странные существа (глюки); за ними - вселенская пустота",
+    "ДМ злобно смеётся и говорит, что здесь отряд встретит свою смерть",
+    "ДМ описывает комнату максимально не опасной",
+    "ДМ говорит \"ну, нафиг\" и выходит из игры (чтобы потом вернуться))",
+    "Здесь лежит брошенное снаряжение Ордена (тел рядом с ним не видно)",
+    "Здесь лежит раздетое тело бойца (снаряжения рядом не видно)",
+    "Здесь лежит тело бойца со всем снаряжением, кроме сапогов",
+    "Отряд теряет всё оружие и броню: они сложены кучей за следующей открываемой дверью",
+    "Капитан панически боится выбирать следующую дверь",
+    // 240
+    "Новичок вспоминает где-то услышанноеи RDP, которого реально не существует",
+    "Согласно RDP вы не можете повторно использовать уже сказанные вами в этой комнате слова",
+    "У одного из членов отряда отказывают ноги до выхода из комнаты",
+    "Один из членов отряда заражается неизвестной болезнью, которая быстро прогрессирует",
+    "Один из членов отряда заражается известной болезнью, которая быстро прогрессирует",
+    "Согласно RDP вы можете использовать только слова \"вероятно\", \"сомнительно\", \"оперируй\", \"одумайся\" и \"RDP\"",
+    "ДМ включает до выхода из комнаты боевую музыку",
+    "Отряд наход связку ключей",
+    "Отряд находит чемодан с грибами",
+    "Отряд находит коробку, набитую наркотиками и использованными презервативами, а также полбутылки самого дрянного алкоголя",
+    // 250
+    "(Если уместно) отряд находит пепелище и опрокинутый железный мангал в центре комнаты",
+    "Это засада!"
 };
 
 const char *FOCUSES[FOCUS_NUM] = {
@@ -307,7 +330,7 @@ struct ConcreteLocation make_loc(int loc_id) {
 
 int get_probability(int chance, int map_quality) {
     int prob = int(100.0 * chance / MAX_PROBABILITY);
-    if (prob % map_quality <= map_quality / 2) prob -= prob % map_quality;
+    if (prob % map_quality < map_quality / 2 + map_quality % 2) prob -= prob % map_quality;
     else prob = prob - prob % map_quality + map_quality;
     return prob;
 }
@@ -342,24 +365,44 @@ void print_loc(ConcreteLocation l, int map_quality, int level) {
     printf("Всего дверей - %ld:\n", l.doors.size());
     int door_id = 0;
     for (Door d: l.doors) {
-	    printf("\t-----\n");
-        printf("  %d:", door_id);
+        printf("  %d:\t", door_id);
+        int average_skulls = 0, sum_pob = 0;
+        for (auto el = d.chances.begin(); el != d.chances.end(); el++) {
+            int prob = get_probability(el->second, map_quality);
+            average_skulls += prob * LOC[el->first].skull_level;
+            sum_pob += prob;
+        }
+        int possible_skulls = average_skulls + MAX_SKULLS * std::max(100 - sum_pob, 0);
+        for (int i = 100; i <= 100 * MAX_SKULLS; i += 100) {
+            if (i <= average_skulls + 100 * (average_skulls % 100 >= 50)) printf("\xE2\x98\xA0"); // ☠, 0xF0 0x9F 0x92 0x80 - for 💀
+            else if (i <= possible_skulls + 100 * (possible_skulls % 100 >= 50)) printf("?");
+            else printf("-");
+        }
+        printf("\n");
         door_id++;
 		int printed_chances = 0;
         for (auto el = d.chances.begin(); el != d.chances.end(); el++) {
             int prob = get_probability(el->second, map_quality);
             if (prob > 0) {
+                printf("\t");
+                for (int i = 0; i < MAX_SKULLS; i++) {
+                    if (i < LOC[el->first].skull_level) printf("\xE2\x98\xA0");
+                    else printf("-");
+                }
                 printf("\t%s - ~%d%%\n", LOC[el->first].name, prob);
 				printed_chances++;
             }
         }
-        int prob = get_probability(d.up, map_quality);
-        printf("\t!!!");
-        if (prob > 0) printf("\tВверх - ~%d%%", prob);
-        prob = get_probability(d.same, map_quality);
-        if (prob > 0) printf("\tНа уровне - ~%d%%", prob);
-        prob = get_probability(d.down, map_quality);
-        if (prob > 0) printf("\tВниз - ~%d%%", prob);
+
+        int prob_up = get_probability(d.up, map_quality), prob_same = get_probability(d.same, map_quality), prob_down = get_probability(d.down, map_quality);
+
+        if (prob_up >= prob_same && prob_up >= prob_down) printf("\t^^^");
+        else if (prob_down >= prob_up && prob_down >= prob_same) printf("\tVVV");
+        else printf("\t===");
+        
+        if (prob_up > 0) printf("\tВверх - ~%d%%", prob_up);
+        if (prob_same > 0) printf("\tНа уровне - ~%d%%", prob_same);
+        if (prob_down > 0) printf("\tВниз - ~%d%%", prob_down);
         printf("\n");
 		int i = 2;
 		while ((i + printed_chances) % 6 != 0) {
@@ -416,7 +459,7 @@ struct Door create_door(unsigned loc_num, int landing_id, int up_buff) {
 }
 
 void gen_doors(struct ConcreteLocation &l, unsigned loc_num, int level, int goal, int luck) {
-    int up_buff = (luck - MAX_PROBABILITY / 2) / 4;
+    int up_buff = (luck - MAX_PROBABILITY / 2) / 2;
     if (0 < level && level < goal) {
         up_buff *= -1; // we shall buff down, not up
     }
@@ -454,6 +497,7 @@ int use_door(const struct ConcreteLocation &l, unsigned door_id, int &level, int
                     printf("ШАНС! ");
                     luck -= LUCK_STABILISER;
                     res_prob = std::max(res_prob, rand() % MAX_PROBABILITY);
+                    if (l.doors[door_id].up + l.doors[door_id].same <= res_prob) break;
                 }
                 luck_left -= MAX_PROBABILITY;
             }
@@ -463,17 +507,19 @@ int use_door(const struct ConcreteLocation &l, unsigned door_id, int &level, int
                     printf("Упс... ");
                     luck += LUCK_STABILISER;
                     res_prob = std::min(res_prob, rand() % MAX_PROBABILITY);
+                    if (l.doors[door_id].up + l.doors[door_id].same > res_prob) break;
                 }
                 luck_left += MAX_PROBABILITY;
             }
         }
     } else if (level > goal) {
-        if (l.doors[door_id].up + l.doors[door_id].same > res_prob) {
+        if (l.doors[door_id].up > res_prob) {
             while (luck_left < MAX_PROBABILITY) {
                 if (rand() % MAX_PROBABILITY > luck_left) {
                     printf("Упс... ");
                     luck += LUCK_STABILISER;
                     res_prob = std::max(res_prob, rand() % MAX_PROBABILITY);
+                    if (l.doors[door_id].up <= res_prob) break;
                 }
                 luck_left += MAX_PROBABILITY;
             }
@@ -483,6 +529,7 @@ int use_door(const struct ConcreteLocation &l, unsigned door_id, int &level, int
                     printf("ШАНС! ");
                     luck -= LUCK_STABILISER;
                     res_prob = std::min(res_prob, rand() % MAX_PROBABILITY);
+                    if (l.doors[door_id].up > res_prob) break;
                 }
                 luck_left -= MAX_PROBABILITY;
             }
