@@ -431,10 +431,12 @@ struct Door create_door(unsigned loc_num, int landing_id, int up_buff) {
     }
     
     global_probability = MAX_PROBABILITY;
+    int door_boost = up_buff * 2 / 5;
     if (rand() % MAX_PROBABILITY - up_buff < MAX_PROBABILITY / 2) {
         // up-directed
         if (landing_id != 0) {
-            res.up = rand() % global_probability + 1;
+            res.up = rand() % (global_probability - door_boost) + 1 + door_boost;
+            if (res.up < 0) res.up = 0;
             global_probability -= res.up;
         } else {
             res.up = 0;
@@ -444,8 +446,10 @@ struct Door create_door(unsigned loc_num, int landing_id, int up_buff) {
         res.down = global_probability - res.same;
     } else {
         // down-directed
+        door_boost *= -1; // for right direction
         if (landing_id != 0) {
-            res.down = rand() % global_probability + 1;
+            res.down = rand() % (global_probability - door_boost) + 1 + door_boost;
+            if (res.down < 0) res.down = 0;
             global_probability -= res.down;
             if (landing_id < 0) res.same = rand() % global_probability + 1;
             else res.same = 0;

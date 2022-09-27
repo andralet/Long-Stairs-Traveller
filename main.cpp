@@ -62,32 +62,34 @@ int main(void) {
             scanf("%d", &door);
             if (door >= 0 && door < l.door_num) {
                 int new_level = level;
-                int new_loc_id = use_door(l, door, new_level, goal, luck);
+                int new_luck = luck;
+                int new_loc_id = use_door(l, door, new_level, goal, new_luck);
                 if (new_loc_id == -1)
                     return 1;
                 ConcreteLocation new_l = make_loc(new_loc_id);
                 if (new_level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
                     new_l = LANDING[new_level / LANDING_DIST];
-                    gen_doors(new_l, GEN_LOC_NUM, new_level, goal, luck);
+                    gen_doors(new_l, GEN_LOC_NUM, new_level, goal, new_luck);
                     printf("Добро пожаловать в якорную точку: %s!\n", LANDING_NAME[new_level / LANDING_DIST]);
                 } else {
-                    gen_doors(new_l, GEN_LOC_NUM, new_level, goal, luck);
+                    gen_doors(new_l, GEN_LOC_NUM, new_level, goal, new_luck);
                     gen_troubles(new_l);
                     if (new_l.troubles.empty()) {
                         // greater chances for at least one trouble
                         gen_troubles(new_l);
                     }
                 }
-                show_info(new_l, new_level, map_quality, goal, luck);
+                show_info(new_l, new_level, map_quality, goal, new_luck);
                 printf("Захлопнуть дверь?(-1 - да): ");
                 scanf("%d", &door);
                 if (door < 0) {
                     printf("RDP breach detected!\n");
-                    map_quality += 2;
+                    map_quality += 4;
                 } else {
                     printf("Удачи!\n");
                     l = new_l;
                     level = new_level;
+                    luck = new_luck;
                     if (level == goal && goal > 0) {
                         printf("Ура!!! Цель достигнута!!! Новая цель - Hellmouth:)\n");
                         goal = 0;
