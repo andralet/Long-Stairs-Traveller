@@ -17,17 +17,40 @@
               OFTEN_LIMIT = 9;
 
     const int MAX_SKULLS = 5;
-    
+
+    #define PERCENT(x) ( (x) * MAX_PROBABILITY / 100 )
+
     const int MAX_PROBABILITY = 1000000,
-              TROUBLE_CHANCE = MAX_PROBABILITY / 2,
-              BASIC_LUCK = MAX_PROBABILITY / 2,
-              LUCK_BUFF = MAX_PROBABILITY / 100 * 40,
+              TROUBLE_CHANCE = PERCENT(50),
+              BASIC_LUCK = PERCENT(50),
+              LUCK_BUFF = PERCENT(40),
               LUCK_ON_EVEN = LUCK_BUFF / 2,
               LUCK_DEBUFF = LUCK_BUFF / 4,
-              LUCK_STABILISER = LUCK_BUFF / 2;
+              LUCK_STABILISER = LUCK_BUFF / 4,
+              
+              MAGIC_LOOT_CHANCE = PERCENT(4),
+              CURSED_MAGIC_CHANCE = PERCENT(40),
+              HEAVY_LOOT_CHANCE = PERCENT(40),
+              VERY_HEAVY_LOOT_CHANCE = PERCENT(10),
+              MONEY_LOOT_LIMIT = 5,
+              MAGIC_LOOT_LIMIT = 50;
 
     // loc_data
     #include "loc_data.hpp"
+
+    // names
+    extern const char *LANDING_NAME[LANDING_NUM];
+    const int LUCK_LEVEL_NUM = 7;
+    extern const char *LUCK_LEVELS[LUCK_LEVEL_NUM];
+    const int TREASURE_NUM = 7;
+    extern const char *TREASURE[TREASURE_NUM];
+    const int TRINKET_NUM = 545;
+    extern const char *TRINKET[TRINKET_NUM];
+
+    const unsigned TROUBLE_NUM = 252;
+    extern const char *TROUBLES[TROUBLE_NUM];
+    const unsigned FOCUS_NUM = 14;
+    extern const char *FOCUSES[FOCUS_NUM];
 
     // loc
     int gen_range(int min, int max);

@@ -122,9 +122,6 @@
         {-1, 50, 50, 20, 2, 0, 0, 0, 8, 20, {}, {}, {}}
     };
 
-    const unsigned TROUBLE_NUM = 252,
-                   MAX_TROUBLES = 4,
-                   
-                   FOCUS_NUM = 14;
+    const unsigned MAX_TROUBLES = 4;
     
 #endif
