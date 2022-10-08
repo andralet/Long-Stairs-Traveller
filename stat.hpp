@@ -28,12 +28,13 @@
               LUCK_DEBUFF = LUCK_BUFF / 4,
               LUCK_STABILISER = LUCK_BUFF / 4,
               
-              MAGIC_LOOT_CHANCE = PERCENT(4),
+              MAGIC_LOOT_CHANCE = PERCENT(10),
               CURSED_MAGIC_CHANCE = PERCENT(40),
               HEAVY_LOOT_CHANCE = PERCENT(40),
               VERY_HEAVY_LOOT_CHANCE = PERCENT(10),
               MONEY_LOOT_LIMIT = 5,
-              MAGIC_LOOT_LIMIT = 50;
+              MONEY_TOP_LIMIT = 30,
+              MAGIC_LOOT_LIMIT = 20;
 
     // loc_data
     #include "loc_data.hpp"

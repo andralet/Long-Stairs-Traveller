@@ -26,7 +26,7 @@
     };*/
 
     struct Location {
-        char name[256];
+        char name[40];
         int size_min, size_max; // in 5ft squares
         int door_max;
         int plants_min, plants_max, fluid_min, fluid_max;
