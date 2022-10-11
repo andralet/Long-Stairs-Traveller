@@ -48,8 +48,11 @@
     const int TRINKET_NUM = 545;
     extern const char *TRINKET[TRINKET_NUM];
 
-    const unsigned TROUBLE_NUM = 252;
-    extern const char *TROUBLES[TROUBLE_NUM];
+    //const unsigned TROUBLE_NUM = 261;
+    //extern const char *TROUBLES[TROUBLE_NUM];
+    const unsigned TROUBLE_NUM = 261; // for checking
+    const unsigned TROUBLE_GROUP_NUM = 27;
+    extern const struct TroubleGroup TROUBLE_GROUPS[TROUBLE_GROUP_NUM];
     const unsigned FOCUS_NUM = 14;
     extern const char *FOCUSES[FOCUS_NUM];
 
@@ -59,8 +62,10 @@
     struct ConcreteLocation make_loc(int loc_id);
     void print_loc(ConcreteLocation l, int map_quality, int level);
     struct Door create_door(unsigned loc_num, int landing_id, int up_buff);
-    void gen_doors(struct ConcreteLocation &l, unsigned loc_num, int level, int goal, int luck);
     void gen_troubles(struct ConcreteLocation &l);
+
+    // door
+    void gen_doors(struct ConcreteLocation &l, unsigned loc_num, int level, int goal, int luck);
     int use_door(const struct ConcreteLocation &l, unsigned door_id, int &level, int &goal, int &luck);
 
     // map

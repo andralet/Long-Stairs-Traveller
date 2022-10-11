@@ -38,6 +38,18 @@
         MapSettings map_data;
     };
 
+    const unsigned MAX_TROUBLE_GROUP = 50;
+    struct TroubleGroup {
+        int weight, size;
+        const char *name;
+        const char *elements[MAX_TROUBLE_GROUP];
+    };
+
+    struct TroubleId {
+        int group;
+        int ingroup_id;
+    };
+
     struct ConcreteLocation {
         int loc_id;
         int x, y, z; // in 5ft squares
@@ -47,7 +59,7 @@
         int enemy, power;
         int focus[2];
         std::vector<Door> doors;
-        std::set<int> troubles;
+        std::vector<TroubleId> troubles;
     };
 
     // walls, grounds and pools

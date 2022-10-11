@@ -62,8 +62,8 @@ void print_loc(ConcreteLocation l, int map_quality, int level) {
         if (l.focus[1]) printf("\t%s\n", FOCUSES[l.focus[1]]);
     }
     printf("Особенности:\n");
-    for (int trouble : l.troubles) {
-        printf("\t%s\n", TROUBLES[trouble]);
+    for (TroubleId trouble : l.troubles) {
+        printf("\t%s <%s>\n", TROUBLE_GROUPS[trouble.group].elements[trouble.ingroup_id], TROUBLE_GROUPS[trouble.group].name);
     }
     printf("Всего дверей - %ld:\n", l.doors.size());
     int door_id = 0;
@@ -115,168 +115,32 @@ void print_loc(ConcreteLocation l, int map_quality, int level) {
     }
 }
 
-struct Door create_door(unsigned loc_num, int landing_id, int up_buff) {
-    struct Door res = {};
-    if (loc_num > LOC_NUM)
-        return res;
-    int global_probability = MAX_PROBABILITY;
-    unsigned done_num = 0;
-    while (done_num < loc_num && global_probability > 0) {
-        int loc_id = rand() % LOC_NUM;
-        if (res.chances.find(loc_id) == res.chances.end()) {
-            int cur_probability = rand() % global_probability + 1;
-            if (done_num == loc_num - 1)
-                cur_probability = global_probability;
-            global_probability -= cur_probability;
-            done_num++;
-            res.chances[loc_id] = cur_probability;
-        }
-    }
-    
-    global_probability = MAX_PROBABILITY;
-    int door_boost = up_buff * 2 / 5;
-    if (rand() % MAX_PROBABILITY - up_buff < MAX_PROBABILITY / 2) {
-        // up-directed
-        if (landing_id != 0) {
-            res.up = rand() % (global_probability - door_boost) + 1 + door_boost;
-            if (res.up < 0) res.up = 0;
-            global_probability -= res.up;
-        } else {
-            res.up = 0;
-        }
-        if (landing_id < 0) res.same = rand() % global_probability + 1;
-        else res.same = 0;
-        res.down = global_probability - res.same;
-    } else {
-        // down-directed
-        door_boost *= -1; // for right direction
-        if (landing_id != 0) {
-            res.down = rand() % (global_probability - door_boost) + 1 + door_boost;
-            if (res.down < 0) res.down = 0;
-            global_probability -= res.down;
-            if (landing_id < 0) res.same = rand() % global_probability + 1;
-            else res.same = 0;
-            res.up = global_probability - res.same;
-        } else {
-            res.down = global_probability;
-            res.same = res.up = 0;
-        }
-    }
-    return res;
-}
-
-void gen_doors(struct ConcreteLocation &l, unsigned loc_num, int level, int goal, int luck) {
-    int up_buff = (luck - MAX_PROBABILITY / 2) / 2;
-    if (0 < level && level < goal) {
-        up_buff *= -1; // we shall buff down, not up
-    }
-    l.doors.clear();
-    for (int i = 0; i < l.door_num; i++) {
-        if (level % LANDING_DIST == 0 && level < int(LANDING_DIST * LANDING_NUM)) {
-            l.doors.push_back(create_door(loc_num, level / LANDING_DIST, up_buff));
-        } else {
-            l.doors.push_back(create_door(loc_num, -1, up_buff));
-        }
-    }
-}
-
 void gen_troubles(struct ConcreteLocation &l) {
+    static int trouble_group_sum = -1;
+    if (trouble_group_sum < 0) {
+        int trouble_count = 0;
+        trouble_group_sum = 0;
+        for (unsigned i = 0; i < TROUBLE_GROUP_NUM; i++) {
+            trouble_group_sum += TROUBLE_GROUPS[i].weight;
+            trouble_count += TROUBLE_GROUPS[i].size;
+        }
+        if (trouble_count != TROUBLE_NUM) {
+            fprintf(stderr, "Trouble number does not match!\n");
+            exit(1);
+        }
+    }
     l.troubles.clear();
     while (rand() % MAX_PROBABILITY <= TROUBLE_CHANCE && l.troubles.size() < MAX_TROUBLES) {
-        int trouble_id = rand() % TROUBLE_NUM;
-        while (l.troubles.find(trouble_id) != l.troubles.end()) {
-            trouble_id = rand() % TROUBLE_NUM;
+        int trouble_weight = rand() % trouble_group_sum;
+        int trouble_group = 0;
+        while (TROUBLE_GROUPS[trouble_group].weight <= trouble_weight) {
+            trouble_weight -= TROUBLE_GROUPS[trouble_group].weight;
+            trouble_group++;
         }
-        l.troubles.insert(trouble_id);
+        while (std::any_of(l.troubles.begin(), l.troubles.end(), [&trouble_group](TroubleId id) {return id.group == trouble_group; })) {
+            trouble_group = rand() % TROUBLE_GROUP_NUM;
+        }
+        TroubleId result = {trouble_group, rand() % TROUBLE_GROUPS[trouble_group].size};
+        l.troubles.push_back(result);
     }
-}
-
-int use_door(const struct ConcreteLocation &l, unsigned door_id, int &level, int &goal, int &luck) {
-    if (door_id >= l.doors.size())
-        return -1;
-    // else
-    int res_prob = rand() % MAX_PROBABILITY;
-    int luck_left = luck;
-    if (level < goal && level > 0) {
-        if (l.doors[door_id].up + l.doors[door_id].same > res_prob) {
-            while (luck_left > 0) {
-                if (rand() % MAX_PROBABILITY <= luck_left) {
-                    printf("ШАНС! ");
-                    luck -= LUCK_STABILISER;
-                    res_prob = std::max(res_prob, rand() % MAX_PROBABILITY);
-                    if (l.doors[door_id].up + l.doors[door_id].same <= res_prob) break;
-                }
-                luck_left -= MAX_PROBABILITY;
-            }
-        } else {
-            while (luck_left < MAX_PROBABILITY) {
-                if (rand() % MAX_PROBABILITY > luck_left) {
-                    printf("Упс... ");
-                    luck += LUCK_STABILISER;
-                    res_prob = std::min(res_prob, rand() % MAX_PROBABILITY);
-                    if (l.doors[door_id].up + l.doors[door_id].same > res_prob) break;
-                }
-                luck_left += MAX_PROBABILITY;
-            }
-        }
-    } else if (level > goal) {
-        if (l.doors[door_id].up > res_prob) {
-            while (luck_left < MAX_PROBABILITY) {
-                if (rand() % MAX_PROBABILITY > luck_left) {
-                    printf("Упс... ");
-                    luck += LUCK_STABILISER;
-                    res_prob = std::max(res_prob, rand() % MAX_PROBABILITY);
-                    if (l.doors[door_id].up <= res_prob) break;
-                }
-                luck_left += MAX_PROBABILITY;
-            }
-        } else {
-            while (luck_left > 0) {
-                if (rand() % MAX_PROBABILITY <= luck_left) {
-                    printf("ШАНС! ");
-                    luck -= LUCK_STABILISER;
-                    res_prob = std::min(res_prob, rand() % MAX_PROBABILITY);
-                    if (l.doors[door_id].up > res_prob) break;
-                }
-                luck_left -= MAX_PROBABILITY;
-            }
-        }
-    }
-
-    if (l.doors[door_id].up > res_prob) {
-        if (0 < level && level < goal) {
-            luck += LUCK_BUFF;
-            // if (luck > MAX_PROBABILITY) luck = MAX_PROBABILITY;
-        } else if (level > goal) {
-            luck -= LUCK_DEBUFF;
-            // if (luck < 0) luck = 0;
-        }
-        level--;
-        printf("Поднялись на %d%s (%.2lf%%)\n", level, (level >= goal ? "!" : ":("), 100.0 * l.doors[door_id].up / MAX_PROBABILITY);
-    } else if (l.doors[door_id].up + l.doors[door_id].same > res_prob) {
-        printf("На уровне (%.2lf%%)\n", 100.0 * l.doors[door_id].same / MAX_PROBABILITY);
-        luck += LUCK_ON_EVEN;
-        // if (luck > MAX_PROBABILITY) luck = MAX_PROBABILITY;
-    } else {
-        if (0 < level && level < goal) {
-            luck -= LUCK_DEBUFF;
-            // if (luck < 0) luck = 0;
-        } else if (level > goal) {
-            luck += LUCK_BUFF;
-            // if (luck > MAX_PROBABILITY) luck = MAX_PROBABILITY;
-        }
-        level++;
-        printf("Опустились на %d%s (%.2lf%%)\n", level, (level <= goal ? "!" : ":("), 100.0 * l.doors[door_id].down / MAX_PROBABILITY);
-    }    
-
-    res_prob = rand() % MAX_PROBABILITY;
-    int prob_sum = 0;
-    for (auto el = l.doors[door_id].chances.begin(); el != l.doors[door_id].chances.end(); el++) {
-        prob_sum += el->second;
-        if (prob_sum > res_prob) {
-            printf("Пошли в %s (%.2lf%%)\n", LOC[el->first].name, 100.0 * el->second / MAX_PROBABILITY);
-            return el->first;
-        }
-    }
-    return -1;
 }

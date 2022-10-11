@@ -8,7 +8,10 @@ void show_loot(const ConcreteLocation &l, int level, int luck) {
 
         double power = l.power / 10.0 + int(level / LANDING_DIST) * 0.25 + 1;
         double max_cost_real = 9.0 * (int(level / LANDING_DIST) + 1) * (5.0 * (power >= 0 ? power * (l.enemy >= 3) * l.enemy : power) + 15.0 * LOC[l.loc_id].skull_level); // some magic happens here
-        max_cost_real *= 1 + (luck - PERCENT(50)) / MAX_PROBABILITY;
+        double luck_modifier = (luck - PERCENT(50)) / MAX_PROBABILITY;
+        if (luck_modifier > 0.1) luck_modifier = 0.1;
+        else if (luck_modifier < -0.1) luck_modifier = -0.1;
+        max_cost_real *= 1 + luck_modifier;
         /*if (luck > MAX_PROBABILITY / 10 && luck < 3 * MAX_PROBABILITY / 2) {
             max_cost_real = max_cost_real * 2 * luck / MAX_PROBABILITY;
         } else if (luck <= MAX_PROBABILITY / 10) {

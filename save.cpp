@@ -7,7 +7,7 @@
 Door-<число описанных дверей>
 <описания дверей по 1 в строке: вероятности вверх, на уровне, вниз, число локаций и вероятности для каждой из них>
 Trouble-<число особенностей>
-<id особенностей по 1 в строке>
+<id особенностей по 1 в строке: id группы и номер в ней>
 */
 
 void save(const ConcreteLocation &l, int level, int map_quality, int picture_id, int goal, int luck) {
@@ -32,8 +32,8 @@ void save(const ConcreteLocation &l, int level, int map_quality, int picture_id,
         fprintf(out, "\n");
     }
     fprintf(out, "Trouble-%lu\n", l.troubles.size());
-    for (int trouble : l.troubles) {
-        fprintf(out, "%d\n", trouble);
+    for (TroubleId trouble : l.troubles) {
+        fprintf(out, "%d %d\n", trouble.group, trouble.ingroup_id);
     }
 
     fclose(out);
@@ -72,9 +72,9 @@ void load(ConcreteLocation &l, int &level, int &map_quality, int &picture_id, in
     fscanf(out, "Trouble-%lu\n", &trouble_num);
     l.troubles.clear();
     for (unsigned long i = 0; i < trouble_num; i++) {
-        int trouble = 0;
-        fscanf(out, "%d\n", &trouble);
-        l.troubles.insert(trouble);
+        TroubleId trouble = {};
+        fscanf(out, "%d %d\n", &trouble.group, &trouble.ingroup_id);
+        l.troubles.push_back(trouble);
     }
 
     fclose(out);
