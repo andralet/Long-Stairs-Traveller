@@ -50,8 +50,8 @@
 
     //const unsigned TROUBLE_NUM = 261;
     //extern const char *TROUBLES[TROUBLE_NUM];
-    const unsigned TROUBLE_NUM = 261; // for checking
-    const unsigned TROUBLE_GROUP_NUM = 27;
+    const unsigned TROUBLE_NUM = 290; // for checking
+    const unsigned TROUBLE_GROUP_NUM = 28;
     extern const struct TroubleGroup TROUBLE_GROUPS[TROUBLE_GROUP_NUM];
     const unsigned FOCUS_NUM = 14;
     extern const char *FOCUSES[FOCUS_NUM];

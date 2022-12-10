@@ -81,7 +81,7 @@ void gen_doors(struct ConcreteLocation &l, unsigned loc_num, int level, int goal
                 d2 = create_door(loc_num, landing_id, up_buff); // generating new door anyway
                 d2_danger = get_door_danger(d2);
             }
-        } while (d1_danger < danger_level - 1 &&  d1_danger < 4);
+        } while (d1_danger < danger_level - 1 &&  d1_danger < 3);
         l.doors.push_back(d1);
         d1 = d2;
         d1_danger = d2_danger;
